@@ -2,8 +2,19 @@ from metodos_programa import *
 import pandas as pd
 
 if __name__ == '__main__':
+    
     # Ingresar periodo de actualizacion
-    tipo_actualizacion = input('Ingresar periodo de actualizacion: ')
+    tipo_semestre = input('Ingresar periodo de actualizacion: ')
+    # Variable para control de flujo
+    tipos_actualizacion = {
+        'mensual': 'mensual',
+        'bimestral': 'bimestral',
+        'trimestral': 'trimestral',
+        'cuatrimestral': 'cuatrimestral',
+        'semestral': 'semestral',
+        'anual': 'anual'
+    }
+
 
     # Configuracion de logs
     logging.basicConfig(
@@ -11,8 +22,9 @@ if __name__ == '__main__':
         format=' %(asctime)s - %(levelname)s - %(message)s',
         filename='HistoriaEjecucion.log',
         filemode='a')
-    # Se eliminan los logs de tipo info para 'numexpr'
+    # Se eliminan los logs de tipo info para 'numexpr', mensajes default
     logging.getLogger("numexpr").setLevel(logging.ERROR)
+
 
     # Iniciar aplicacion excel
     excel_app = win32com.client.Dispatch('Excel.Application')
@@ -21,40 +33,31 @@ if __name__ == '__main__':
     # Desactivar mensajes de confirmación de guardado
     excel_app.DisplayAlerts = False
 
+    # Bloque principal de ejecucion
     try:
         # Mensaje de inicio de ejecucion principal
         logging.info(
-            f'Inicio actualizacion archivos {tipo_actualizacion}es'
+            f'Inicio actualizacion archivos {tipos_actualizacion[tipo_semestre]}es'
         )
-        # Condiciones de actualizacion
-        if tipo_actualizacion == 'mensual':
-            pass
-
-        elif tipo_actualizacion == 'bimestral':
-            pass
-
-        elif tipo_actualizacion == 'trimestral':
-            pass
-
-        elif tipo_actualizacion == 'cuatrimestral':
-            pass
-
-        elif tipo_actualizacion == 'semestral':
-            pass
-
-        elif tipo_actualizacion == 'anual':
-            pass
+        # Condiciones de para determinar que archivos segun su fecha se van a actualizar
+        if  tipos_actualizacion[tipo_semestre] in list(tipos_actualizacion.values()):
+            # Abrir rutas del archivo
+            with open(
+                f'rutas_archivos_actualizar/rutas_adaptadas/{tipos_actualizacion[tipo_semestre]}.txt', mode='r', encoding='utf-8') as rutas_archivos:
+                # Actualización de rutas
+                for ruta in rutas_archivos:
+                    print(ruta)
 
         else:
             # Mensaje, no cumplimiento condicón en bloque if
             logging.warning(
-                f'El tipo de actualizacion "{tipo_actualizacion}" no se encuentra en las opciones'
+                f'El tipo de actualizacion "{tipos_actualizacion[tipo_semestre]}" no se encuentra en las opciones'
             )
 
     except Exception as error:
         # Mensaje de error
         logging.error(
-            f'No fue posible actualizar los archivos, revisar excepción:\n{error}')
+            f'No fue posible actualizar los archivos, revisar excepcion:\n{error}')
         # Desactivar app excel
         excel_app.Quit()
 
