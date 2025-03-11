@@ -26,6 +26,8 @@ def trazabilidad_archivo(ruta_libro: Path, acronimo: str) -> None:
     FileNotFoundError: No se encontro la ruta, el archivo o la ruta es incorrecta
     """
     try:
+        print(f'Trazabilidad de Archivo: "{ruta_libro.stem}"')
+
         # Se recopila fecha para la trazabilidad del archivo
         fecha_actual = datetime.now().strftime("%Y-%m-%d")
 
@@ -45,13 +47,13 @@ def trazabilidad_archivo(ruta_libro: Path, acronimo: str) -> None:
 
         # Mensaje para creación de trazabilidad correcta
         logging.info(
-            f'Se creo exitosamente trazabilidad para el archivo {ruta_libro.stem}'
+            f'Se creo exitosamente trazabilidad para el archivo "{ruta_libro.stem}"'
         )
 
     except Exception as error:
         # Mensaje error
         logging.error(
-            f'Verificar la estructura o ruta del archivo {ruta_libro.stem}, excepcion:\n{error}'
+            f'Verificar la estructura o ruta del archivo "{ruta_libro.stem}", excepcion:\n{error}'
         )
 
 
@@ -71,6 +73,8 @@ def actualizar_libros(excel_app: win32com.client.CDispatch, ruta_libro: Path) ->
     FileNotFoundError: No se encontro la ruta o es incorrecta
     """
     try:
+        print(f'Actualización de archivo: {ruta_libro.stem}')
+
         # Abrir el archivo de excel
         libro_actualizar = excel_app.Workbooks.Open(ruta_libro.as_posix())
 
@@ -88,11 +92,13 @@ def actualizar_libros(excel_app: win32com.client.CDispatch, ruta_libro: Path) ->
 
         # Mensaje para actualización correcta
         logging.info(
-            f'Actualización completa para el archivo: {ruta_libro.stem}'
+            f'Actualizacion completa para el archivo: "{ruta_libro.stem}"'
         )
 
     except Exception as error:
+        # Cerrar aplicación
+        excel_app.Quit()
         # Mensaje error      
         logging.error(
-            f'Verificar el archivo {ruta_libro.stem}, excepcion:\n{error}'
+            f'Verificar el archivo "{ruta_libro.stem}", excepcion:\n{error}'
         )   
