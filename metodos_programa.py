@@ -76,29 +76,32 @@ def actualizar_libros(ruta_libro: Path) -> None:
     try:
         print(f'Actualización de archivo: {ruta_libro.stem}')
 
+        # Abrir aplicación Excel
         excel_ejecutado = win32com.Dispatch('Excel.Application')
+        # Activar o desactivar pestaña de excel
         excel_ejecutado.Visible = True
+        # Activar o desactivar pestañas emergentes
         excel_ejecutado.DisplayAlerts = False 
 
         # Abrir el archivo de excel
         libro_actualizar = excel_ejecutado.Workbooks.Open(ruta_libro.as_posix())
 
         # Ejecutar comando para actualizar consultas
-        #NUEVO
         for query in libro_actualizar.Queries:
             query.Refresh()
+            # Dejar reposar el algoritmo por 2 segundos
             time.sleep(2)
 
         # Esperar a que se terminen de ejecutar las rutinas antes de cerrar archivo
         excel_ejecutado.CalculateUntilAsyncQueriesDone()
-
-               
+ 
         # Guardar archivo actualizado
         libro_actualizar.Save()
 
         # Cerrar archivo
         libro_actualizar.Close()
 
+        # Cerrar aplicación Excel
         excel_ejecutado.Quit()
 
         # Mensaje para actualización correcta
