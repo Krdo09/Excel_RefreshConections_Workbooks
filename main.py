@@ -15,7 +15,6 @@ if __name__ == '__main__':
         'pruebas': {'pruebas': 'TIC_UPDATE'}
     }
 
-
     # Configuracion de logs
     logging.basicConfig(
         level=logging.INFO,
@@ -25,31 +24,19 @@ if __name__ == '__main__':
     # Se eliminan los logs de tipo info para 'numexpr', mensajes default
     logging.getLogger("numexpr").setLevel(logging.ERROR)
 
-
-    # Iniciar aplicacion excel
-    excel_app = win32com.client.Dispatch('Excel.Application')
-    # Desactivar interfaz de la aplicacion
-    excel_app.Visible = False
-    # Desactivar mensajes de confirmación de guardado
-    excel_app.DisplayAlerts = False
-
     # Bloque principal de ejecucion
     try:
         # Mensaje de inicio de ejecucion principal
         logging.info(
             f'Inicio actualizacion para tipo archivo: "{tipo_semestre}"'
-        )
+            )
+        
         # Condiciones de para determinar que archivos segun su fecha se van a actualizar
         if  list(tipos_actualizacion[tipo_semestre].keys())[0] in list(tipos_actualizacion[tipo_semestre].keys()):
             # Abrir rutas del archivo
             with open(
-                f'rutas_archivos_actualizar/rutas_adaptadas/{tipo_semestre}.txt', mode='r', encoding='utf-8') as rutas_archivos:
-                # Ejecutar aplicación Excel            
-                excel_ejecutado = win32com.client.Dispatch('Excel.Application')
-                # Visualizar pestañas de excel  
-                excel_ejecutado.Visible = False 
-                # Desactivar ventanas de notificación
-                excel_ejecutado.DisplayAlerts = False
+                f'rutas_archivos_actualizar/rutas_adaptadas/{tipo_semestre}.txt', mode='r', encoding='utf-8'
+                ) as rutas_archivos:
 
                 # Bloque principal para la actualización de los libros  
                 for ruta_txt in rutas_archivos:
@@ -60,25 +47,23 @@ if __name__ == '__main__':
                     # Crear trazabilidad de archivo
                     trazabilidad_archivo(obj_path, acronimo="TIC_Automatico")
                     # Actualizar libros
-                    actualizar_libros(excel_ejecutado, obj_path)
+                    actualizar_libros(obj_path)
 
         else:
             # Mensaje, no cumplimiento condicón en bloque if
             logging.warning(
                 f'El tipo de actualizacion "{tipo_semestre}" no se encuentra en las opciones'
-            )
+                )
 
     except Exception as error:
         # Mensaje de error
         logging.error(
-            f'No fue posible actualizar los archivos, revisar excepcion:\n{error}')
-        # Desactivar app excel
-        excel_app.Quit()
+            f'No fue posible actualizar los archivos, revisar excepcion:\n{error}'
+            )
 
     else:
         # Mensaje de ejecución exitosa
         logging.info(
             'El programa se ejecuto correctamente'
-        )
-        # Desactivar app excel siempre al salir del try
-        excel_app.Quit()
+            )
+
