@@ -2,8 +2,9 @@ from datetime import datetime
 from pathlib import Path
 import logging
 import shutil
-import win32com.client as win32com
+import sys
 import time 
+import win32com.client as win32com
 
 
 def trazabilidad_archivo(ruta_libro: Path, acronimo: str) -> None:
@@ -27,8 +28,6 @@ def trazabilidad_archivo(ruta_libro: Path, acronimo: str) -> None:
     FileNotFoundError: No se encontro la ruta, el archivo o la ruta es incorrecta
     """
     try:
-        print(f'Trazabilidad de Archivo: "{ruta_libro.stem}"')
-
         # Se recopila fecha para la trazabilidad del archivo
         fecha_actual = datetime.now().strftime("%Y-%m-%d")
 
@@ -74,12 +73,15 @@ def actualizar_libros(ruta_libro: Path) -> None:
     FileNotFoundError: No se encontro la ruta o es incorrecta
     """
     try:
-        print(f'Actualización de archivo: {ruta_libro.stem}')
-
+        print(ruta_libro.stem)
+        # Notificar inicio de actualización del archivo
+        logging.info(
+            f'Inicio actualizacion del archivo "{ruta_libro.stem}"'
+        )
         # Abrir aplicación Excel
         excel_ejecutado = win32com.Dispatch('Excel.Application')
         # Activar o desactivar pestaña de excel
-        excel_ejecutado.Visible = True
+        excel_ejecutado.Visible = False
         # Activar o desactivar pestañas emergentes
         excel_ejecutado.DisplayAlerts = False 
 
@@ -87,10 +89,13 @@ def actualizar_libros(ruta_libro: Path) -> None:
         libro_actualizar = excel_ejecutado.Workbooks.Open(ruta_libro.as_posix())
 
         # Ejecutar comando para actualizar consultas
+        consulta = 1
         for query in libro_actualizar.Queries:
             query.Refresh()
-            # Dejar reposar el algoritmo por 2 segundos
-            time.sleep(2)
+            print(consulta)
+            # Dejar reposar el algoritmo por 10 segundos
+            time.sleep(10)
+            consulta += 1
 
         # Esperar a que se terminen de ejecutar las rutinas antes de cerrar archivo
         excel_ejecutado.CalculateUntilAsyncQueriesDone()
