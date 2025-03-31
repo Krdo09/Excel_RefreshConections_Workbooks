@@ -1,3 +1,4 @@
+from rutas_entorno import *
 from metodos_programa import *
 
 if __name__ == '__main__':
@@ -5,17 +6,6 @@ if __name__ == '__main__':
     # Obtener argumento ingresado en ejecutable .bat
     if len(sys.argv) > 1:
         archivos_nombre = sys.argv[1]
-
-    # Variable para control de flujo programa
-    tipos_WorkBooks = {
-        'mensual': {'mensual': 'TIC_UPDATE_MENSUAL'},
-        'bimestral': {'bimestral': 'TIC_UPDATE_BIMESTRAL'},
-        'trimestral': {'trimestral': 'TIC_UPDATE_TRIMESTRAL'},
-        'cuatrimestral': {'cuatrimestral':'TIC_UPDATE_CUATRIMESTRAL'},
-        'semestral': {'semestral':'TIC_UPDATE_SEMESTRAL'},
-        'anual': {'anual': 'TIC_UPDATE_ANUAL'},
-        'pruebas': {'pruebas': 'TIC_UPDATE'}
-    }
 
     # Configuracion de logs
     logging.basicConfig(
@@ -36,10 +26,12 @@ if __name__ == '__main__':
             )
         
         # Condiciones de para determinar que archivos segun su llave se van a actualizar
-        if  list(tipos_WorkBooks[archivos_nombre].keys())[0] in list(tipos_WorkBooks[archivos_nombre].keys()):
+        if archivos_nombre in set(tipos_WorkBooks.keys()):
             # Abrir rutas del archivo
             with open(
-                f'rutas_archivos_actualizar/rutas_adaptadas/{archivos_nombre}.txt', mode='r', encoding='utf-8'
+                tipos_WorkBooks[archivos_nombre], 
+                mode='r', 
+                encoding='utf-8'
                 ) as rutas_archivos:
 
                 # Bloque principal para la actualización de los libros  
