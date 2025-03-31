@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     # Convertir en objeto Path (administrador de rutas)
                     obj_path = Path(ruta_txt)
                     # Crear trazabilidad de archivo
-                    trazabilidad_archivo(obj_path, acronimo="TICAU")
+                    trazabilidad_archivo(obj_path, acronimo="00TIC")
                     # Actualizar libros
                     actualizar_libros(obj_path)
 
