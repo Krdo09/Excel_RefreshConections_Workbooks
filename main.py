@@ -2,10 +2,12 @@ from metodos_programa import *
 
 if __name__ == '__main__':
     
-    # Ingresar periodo de actualizacion
-    tipo_semestre = input('Ingresar periodo de actualizacion: ')
+    # Obtener argumento ingresado en ejecutable .bat
+    if len(sys.argv) > 1:
+        archivos_nombre = sys.argv[1]
+
     # Variable para control de flujo programa
-    tipos_actualizacion = {
+    tipos_WorkBooks = {
         'mensual': {'mensual': 'TIC_UPDATE_MENSUAL'},
         'bimestral': {'bimestral': 'TIC_UPDATE_BIMESTRAL'},
         'trimestral': {'trimestral': 'TIC_UPDATE_TRIMESTRAL'},
@@ -18,9 +20,11 @@ if __name__ == '__main__':
     # Configuracion de logs
     logging.basicConfig(
         level=logging.INFO,
-        format=' %(asctime)s - %(levelname)s - %(message)s',
+        format='%(asctime)s - %(levelname)s - %(message)s',
         filename='HistoriaEjecucion.log',
-        filemode='a')
+        filemode='a'
+        )
+    
     # Se eliminan los logs de tipo info para 'numexpr', mensajes default
     logging.getLogger("numexpr").setLevel(logging.ERROR)
 
@@ -28,14 +32,14 @@ if __name__ == '__main__':
     try:
         # Mensaje de inicio de ejecucion principal
         logging.info(
-            f'Inicio actualizacion para tipo archivo: "{tipo_semestre}"'
+            f'Inicio actualizacion para tipo archivo: "{archivos_nombre}"'
             )
         
-        # Condiciones de para determinar que archivos segun su fecha se van a actualizar
-        if  list(tipos_actualizacion[tipo_semestre].keys())[0] in list(tipos_actualizacion[tipo_semestre].keys()):
+        # Condiciones de para determinar que archivos segun su llave se van a actualizar
+        if  list(tipos_WorkBooks[archivos_nombre].keys())[0] in list(tipos_WorkBooks[archivos_nombre].keys()):
             # Abrir rutas del archivo
             with open(
-                f'rutas_archivos_actualizar/rutas_adaptadas/{tipo_semestre}.txt', mode='r', encoding='utf-8'
+                f'rutas_archivos_actualizar/rutas_adaptadas/{archivos_nombre}.txt', mode='r', encoding='utf-8'
                 ) as rutas_archivos:
 
                 # Bloque principal para la actualización de los libros  
@@ -52,7 +56,7 @@ if __name__ == '__main__':
         else:
             # Mensaje, no cumplimiento condicón en bloque if
             logging.warning(
-                f'El tipo de actualizacion "{tipo_semestre}" no se encuentra en las opciones'
+                f'El tipo de actualizacion "{archivos_nombre}" no se encuentra en las opciones'
                 )
 
     except Exception as error:
