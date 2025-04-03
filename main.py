@@ -1,12 +1,8 @@
-from rutas_entorno import *
+from varibles_entorno import *
 from metodos_programa import *
 
 if __name__ == '__main__':
     
-    # Obtener argumento ingresado en ejecutable .bat
-    if len(sys.argv) > 1:
-        archivos_nombre = sys.argv[1]
-
     # Configuracion de logs
     logging.basicConfig(
         level=logging.INFO,
@@ -14,12 +10,28 @@ if __name__ == '__main__':
         filename='HistoriaEjecucion.log',
         filemode='a'
         )
-    
     # Se eliminan los logs de tipo info para 'numexpr', mensajes default
     logging.getLogger("numexpr").setLevel(logging.ERROR)
-
+    
     # Bloque principal de ejecucion
     try:
+        # Crear trazabilidad de archivo de rutas
+        trazabilidad_archivo(ruta_libro=Path(directorio_rutas_actualizar), acronimo='00TIC')
+        
+        # Cargar información de archivos que se deben actualizar
+        nombres_hojas = ['Archivos Diarios', 'Archivos x Frecuencia']
+        tablas_rutas = {}
+        for nombre_hoja in nombres_hojas:
+            excel_tabla = pd.read_excel(directorio_rutas_actualizar, sheet_name=nombre_hoja)
+            tablas_rutas[nombre_hoja] = excel_tabla   
+
+        # Filtrar archivos para actualizar de 'Archivos_Frecuencia'
+        archivos_frecuencia_df = tablas_rutas[nombres_hojas[1]]
+        archivos_frecuencia_df = archivos_frecuencia_df[archivos_frecuencia_df['Prox. Actu.'] == datetime.now().strftime("%Y/%m/%d")]
+        # Sobre ecribir df
+        tablas_rutas['Archivos x Frecuencia'] = archivos_frecuencia_df
+
+
         # Mensaje de inicio de ejecucion principal
         logging.info(
             f'Inicio actualizacion para tipo archivo: "{archivos_nombre}"'
