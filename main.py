@@ -1,5 +1,4 @@
-from varibles_entorno import *
-from metodos_programa import *
+from variables_entorno import *
 
 if __name__ == '__main__':
     
@@ -18,50 +17,43 @@ if __name__ == '__main__':
         # Crear trazabilidad de archivo de rutas
         trazabilidad_archivo(ruta_libro=Path(directorio_rutas_actualizar), acronimo='00TIC')
         
-        # Cargar información de archivos que se deben actualizar
-        nombres_hojas = ['Archivos Diarios', 'Archivos x Frecuencia']
-        tablas_rutas = {}
-        for nombre_hoja in nombres_hojas:
-            excel_tabla = pd.read_excel(directorio_rutas_actualizar, sheet_name=nombre_hoja)
-            tablas_rutas[nombre_hoja] = excel_tabla   
-
-        # Filtrar archivos para actualizar de 'Archivos_Frecuencia'
-        archivos_frecuencia_df = tablas_rutas[nombres_hojas[1]]
-        archivos_frecuencia_df = archivos_frecuencia_df[archivos_frecuencia_df['Prox. Actu.'] == datetime.now().strftime("%Y/%m/%d")]
-        # Sobre ecribir df
-        tablas_rutas['Archivos x Frecuencia'] = archivos_frecuencia_df
-
-
-        # Mensaje de inicio de ejecucion principal
-        logging.info(
-            f'Inicio actualizacion para tipo archivo: "{archivos_nombre}"'
+        # Actulizar rutas en los directorios
+        indice = 0
+        for directorio in tablas_rutas.values:
+            # Mensaje inicio actualización tipos de archivos
+            logging.info(
+                f'Inicio actualizacion para: "{nombres_directorios[indice]}"'
             )
-        
-        # Condiciones de para determinar que archivos segun su llave se van a actualizar
-        if archivos_nombre in set(tipos_WorkBooks.keys()):
-            # Abrir rutas del archivo
-            with open(
-                tipos_WorkBooks[archivos_nombre], 
-                mode='r', 
-                encoding='utf-8'
-                ) as rutas_archivos:
-
-                # Bloque principal para la actualización de los libros  
-                for ruta_txt in rutas_archivos:
-                    # Limpiar ruta de carcteres especiales
-                    ruta_txt = ruta_txt.replace('\n', '')
-                    # Convertir en objeto Path (administrador de rutas)
-                    obj_path = Path(ruta_txt)
-                    # Crear trazabilidad de archivo
-                    trazabilidad_archivo(obj_path, acronimo="00TIC")
-                    # Actualizar libros
-                    actualizar_libros(obj_path)
-
-        else:
-            # Mensaje, no cumplimiento condicón en bloque if
-            logging.warning(
-                f'El tipo de actualizacion "{archivos_nombre}" no se encuentra en las opciones'
+            
+            # Recorrer cada registro (archivo) en el directorio
+            for _, fila in directorio.itertuples():
+                # Mensaje inicio actualizacion archivo
+                logging.info(
+                    f'Inicio actualizacion para tipo archivo: "{fila[0]}"'
+                    )
+                
+                # Cargar ruta del archivo
+                ruta_archivo = Path(fila[1])
+                # Crear trazabilidad del archivo
+                trazabilidad_archivo(ruta_archivo, acronimo='00TIC')
+                # Actualizar archivos
+                actualizar_libros(ruta_archivo)
+                
+                #Moficar con fechas actualizadas
+                nuevas_fechas = proxima_fecha_actualizacion(
+                    frecuencias=frecuencias_df,
+                    dias=dias_df,
+                    fecha_actualizacion=fila[4],
+                    frecuencia=fila[3]
                 )
+
+            indice += 1
+            
+            # Mensaje finzalizacion actualizacion tipos de archivos
+            logging.info(
+                f"""Actualización Finalizada para: {nombres_directorios[indice]}\n
+                ----------------------------------------------------------------------------------------------------------------"""
+            )
 
     except Exception as error:
         # Mensaje de error
